@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth, isAdminEmail } from "@/auth";
+import { auth, isAdminIdentity } from "@/auth";
 
 export type AdminSession = {
   email: string;
@@ -18,17 +18,20 @@ export type AdminSession = {
  */
 export async function requireAdmin(): Promise<AdminSession> {
   const session = await auth();
-  const email = session?.user?.email;
+  const email = session?.user?.email ?? null;
+  const login = session?.githubLogin ?? null;
 
   // No session at all: send them to sign in. src/proxy.ts normally catches
   // this first, but a page must not depend on the proxy having run — this is
   // also what turns a missing session into a redirect instead of a 500.
-  if (!email) redirect("/login");
+  if (!email && !login) redirect("/login");
 
   // Signed in but not on the allowlist. Not a redirect: they are authenticated
   // and looping them back to sign-in would be confusing.
-  if (!isAdminEmail(email)) {
-    throw new Error(`${email} is not on the admin allowlist.`);
+  if (!isAdminIdentity({ email, login })) {
+    throw new Error(
+      `${login ? `@${login}` : email} is not on the admin allowlist.`,
+    );
   }
   if (!session?.githubToken) {
     // The session predates the GitHub scope, or the token was revoked.
@@ -36,8 +39,8 @@ export async function requireAdmin(): Promise<AdminSession> {
   }
 
   return {
-    email,
-    login: session.githubLogin,
+    email: email ?? `@${login}`,
+    login: login ?? undefined,
     githubToken: session.githubToken,
   };
 }
@@ -51,11 +54,12 @@ export async function requireAdmin(): Promise<AdminSession> {
  */
 export async function getAdmin(): Promise<AdminSession | null> {
   const session = await auth();
-  const email = session?.user?.email;
-  if (!email || !isAdminEmail(email) || !session?.githubToken) return null;
+  const email = session?.user?.email ?? null;
+  const login = session?.githubLogin ?? null;
+  if (!isAdminIdentity({ email, login }) || !session?.githubToken) return null;
   return {
-    email,
-    login: session.githubLogin,
+    email: email ?? `@${login}`,
+    login: login ?? undefined,
     githubToken: session.githubToken,
   };
 }

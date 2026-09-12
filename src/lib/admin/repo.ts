@@ -39,12 +39,15 @@ export type RepoErrorKind =
   | "unknown";
 
 export class RepoError extends Error {
-  constructor(
-    readonly kind: RepoErrorKind,
-    message: string,
-  ) {
+  // Assigned in the body rather than as a constructor parameter property:
+  // parameter properties are TypeScript-only syntax that needs transforming,
+  // not just type-erasing, so plain type-stripping runtimes reject them.
+  readonly kind: RepoErrorKind;
+
+  constructor(kind: RepoErrorKind, message: string) {
     super(message);
     this.name = "RepoError";
+    this.kind = kind;
   }
 }
 

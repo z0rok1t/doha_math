@@ -152,6 +152,77 @@ code change.
 Each of these has a `// TODO:` at the exact spot that would change, explaining
 what's needed. Grep for `TODO:` to find them.
 
+## The admin panel (/admin)
+
+Content is edited at `/admin` and **committed back to this repository** through
+the GitHub API. There is no database: every edit is a commit you can read,
+revert or blame, and the site rebuilds from it.
+
+The trade-off is latency — a save takes about a minute to appear on the live
+site while Vercel rebuilds. The panel itself always shows the current state,
+because it reads the branch rather than the deployed filesystem.
+
+### One-time setup
+
+Everything else is already wired; this is the only part that needs a human,
+because GitHub has no API for creating OAuth apps.
+
+**1. Create a GitHub OAuth app** at
+<https://github.com/settings/applications/new>
+
+| Field | Value |
+|---|---|
+| Application name | `Mira Solves Admin (local)` |
+| Homepage URL | `http://localhost:3000` |
+| Authorization callback URL | `http://localhost:3000/api/auth/callback/github` |
+
+Then **Generate a new client secret**.
+
+An OAuth app allows only one callback URL, so production needs a second app
+with the Vercel domain — `https://<your-domain>/api/auth/callback/github`.
+
+**2. Copy `.env.example` to `.env.local`** and fill in:
+
+```bash
+AUTH_SECRET=            # npx auth secret
+AUTH_GITHUB_ID=         # from step 1
+AUTH_GITHUB_SECRET=     # from step 1
+ADMIN_LOGINS=           # your GitHub username
+GITHUB_REPO=owner/repo
+GITHUB_BRANCH=main
+GITHUB_OAUTH_SCOPE=public_repo   # a private repo needs: repo
+```
+
+**3. `npm run dev`** and open <http://localhost:3000/admin>.
+
+### Who can get in
+
+`ADMIN_LOGINS` (GitHub usernames) and `ADMIN_EMAILS` are both checked, and
+matching either is enough. Prefer usernames: a GitHub account can keep its
+email private, and the address it signs commits with is frequently not its
+primary one, which makes an email-only allowlist a common lockout.
+
+**Leaving both empty denies everyone.** The check fails closed deliberately.
+
+Access is enforced in `requireAdmin()`, called by every admin page and every
+Server Action. `src/proxy.ts` also redirects signed-out browsers, but that is
+only for the UX — a Server Action is a public HTTP endpoint, so the proxy can
+never be the security boundary.
+
+### What the panel can do
+
+- Problems: create, edit, rename, delete; live KaTeX preview of the statement
+  and of every solution step; reorder steps; upload a diagram (committed to
+  `public/problems/`, with its dimensions measured in the browser).
+- Draft / published status. Drafts are filtered out at the data seam, so they
+  are absent from every public page, listing, count and prerendered route.
+- Concurrent edits are refused, not merged: the blob SHA you loaded is sent
+  back on save, so if someone else changed the file first you get an error
+  instead of silently overwriting them.
+
+Not built yet: the `/admin/challenges`, `/admin/daily` and `/admin/site`
+screens. Those content types are still edited by hand in `content/`.
+
 ## Swapping the file-based content for a database or CMS
 
 `src/lib/data/source.ts` is the only module that touches the filesystem.

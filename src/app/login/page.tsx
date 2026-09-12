@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const ERRORS: Record<string, string> = {
   AccessDenied:
-    "That GitHub account is not on the allowlist. Ask for your email to be added to ADMIN_EMAILS.",
+    "That GitHub account is not on the allowlist. Add its username to ADMIN_LOGINS (or its email to ADMIN_EMAILS) and try again.",
   Configuration:
     "Sign-in is not configured. AUTH_SECRET, AUTH_GITHUB_ID and AUTH_GITHUB_SECRET all need to be set.",
   Verification: "That sign-in link has expired. Try again.",

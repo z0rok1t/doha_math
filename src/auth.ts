@@ -17,18 +17,37 @@ import GitHub from "next-auth/providers/github";
  *      and every Server Action — that is the actual security boundary.
  */
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
-  .split(",")
-  .map((entry) => entry.trim().toLowerCase())
-  .filter(Boolean);
+function parseList(value: string | undefined): string[] {
+  return (value ?? "")
+    .split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+const ADMIN_EMAILS = parseList(process.env.ADMIN_EMAILS);
+const ADMIN_LOGINS = parseList(process.env.ADMIN_LOGINS);
 
 /**
- * Fails closed: an empty or unset ADMIN_EMAILS locks everyone out rather than
- * letting anyone with a GitHub account in.
+ * Who may use the panel.
+ *
+ * Either identifier is accepted. A GitHub account can keep its email private,
+ * and the email it signs commits with is often not its primary address — so
+ * relying on email alone makes "not on the allowlist" a common and baffling
+ * first-run failure. A username is stable and visible.
+ *
+ * Fails closed: if neither list is configured, nobody gets in.
  */
-export function isAdminEmail(email: string | null | undefined): boolean {
-  if (!email || ADMIN_EMAILS.length === 0) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase());
+export function isAdminIdentity({
+  email,
+  login,
+}: {
+  email?: string | null;
+  login?: string | null;
+}): boolean {
+  if (ADMIN_EMAILS.length === 0 && ADMIN_LOGINS.length === 0) return false;
+  if (email && ADMIN_EMAILS.includes(email.toLowerCase())) return true;
+  if (login && ADMIN_LOGINS.includes(login.toLowerCase())) return true;
+  return false;
 }
 
 type GitHubEmail = { email: string; primary: boolean; verified: boolean };
@@ -78,8 +97,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: { signIn: "/login" },
   callbacks: {
     async signIn({ account, profile }) {
+      const login = typeof profile?.login === "string" ? profile.login : null;
+      // Skip the extra email lookup when the username alone already qualifies.
+      if (isAdminIdentity({ login })) return true;
       const email = await resolveEmail(profile, account?.access_token);
-      return isAdminEmail(email);
+      return isAdminIdentity({ email, login });
     },
     async jwt({ token, account, profile }) {
       // `account` is only present on the initial sign-in.
