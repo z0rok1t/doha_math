@@ -1,0 +1,12 @@
+# The admin panel commits content through the GitHub API, which writes LF.
+# Normalising here keeps a Windows checkout from producing phantom CRLF diffs
+# against files the panel wrote.
+* text=auto eol=lf
+
+# Binary-ish assets git should not touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.ico binary
