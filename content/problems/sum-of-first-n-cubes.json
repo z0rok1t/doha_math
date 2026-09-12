@@ -1,0 +1,20 @@
+{
+  "slug": "sum-of-first-n-cubes",
+  "number": 409,
+  "title": "Why the cubes add up to a perfect square",
+  "topic": "number-theory",
+  "difficulty": "medium",
+  "statement": "Show that $1^3 + 2^3 + 3^3 + \\cdots + n^3 = \\left(\\dfrac{n(n+1)}{2}\\right)^2$ for every positive integer $n$. Note what the right-hand side is: the square of the $n$-th triangular number.",
+  "solutionSteps": [
+    "Base case. For $n = 1$ the left side is $1$, and the right side is $\\left(\\tfrac{1 \\cdot 2}{2}\\right)^2 = 1$. They agree.",
+    "Inductive hypothesis. Suppose the formula holds for some $n = k$, so $1^3 + \\cdots + k^3 = \\left(\\tfrac{k(k+1)}{2}\\right)^2$.",
+    "Add $(k+1)^3$ to both sides: $$1^3 + \\cdots + (k+1)^3 = \\frac{k^2(k+1)^2}{4} + (k+1)^3.$$",
+    "Factor out $\\dfrac{(k+1)^2}{4}$: $$\\frac{(k+1)^2}{4}\\left[k^2 + 4(k+1)\\right] = \\frac{(k+1)^2(k^2 + 4k + 4)}{4}.$$",
+    "But $k^2 + 4k + 4 = (k+2)^2$, so this is $$\\frac{(k+1)^2(k+2)^2}{4} = \\left(\\frac{(k+1)(k+2)}{2}\\right)^2,$$ which is exactly the formula with $n = k+1$.",
+    "The base case holds and the step carries it forward, so by induction the identity holds for all $n \\geq 1$."
+  ],
+  "glyph": "$\\sum n^3$",
+  "videoSeconds": 104,
+  "solveCount": 1483,
+  "publishedAt": "2026-09-07"
+}

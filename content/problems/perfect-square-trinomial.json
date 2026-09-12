@@ -1,0 +1,17 @@
+{
+  "slug": "perfect-square-trinomial",
+  "number": 405,
+  "title": "The quadratic that only has one answer",
+  "topic": "algebra",
+  "difficulty": "easy",
+  "statement": "Solve $x^2 - 6x + 9 = 0$. Most people reach for the quadratic formula here. Look at the left-hand side first — it's hiding something.",
+  "solutionSteps": [
+    "Check whether the left-hand side is a perfect square. For $x^2 + bx + c$ to equal $(x + k)^2$ we need $c = (b/2)^2$. Here $b = -6$ and $c = 9$, and indeed $(-6/2)^2 = 9$.",
+    "So the equation factors as $(x - 3)^2 = 0$.",
+    "A product is zero only when a factor is zero, so $x - 3 = 0$.",
+    "Therefore $x = 3$. It is a double root — the parabola touches the $x$-axis at exactly one point instead of crossing it, which is why the quadratic formula hands you $3$ twice."
+  ],
+  "videoSeconds": 47,
+  "solveCount": 2841,
+  "publishedAt": "2026-09-03"
+}

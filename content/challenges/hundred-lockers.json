@@ -1,0 +1,41 @@
+{
+  "slug": "hundred-lockers",
+  "week": "Week 22",
+  "title": "One Hundred Lockers",
+  "prompt": "A hundred lockers start closed. Student 1 toggles every locker, student 2 toggles every 2nd, student 3 every 3rd, and so on through student 100. Which lockers are open at the end?",
+  "opensAt": "2026-08-24",
+  "closesAt": "2026-08-30",
+  "solutionSteps": [
+    "Locker k is toggled once by each student whose number divides k. So it ends open exactly when k has an odd number of divisors.",
+    "Divisors normally come in pairs: if d divides k, so does k/d. That makes the count even.",
+    "The pairing only fails when d = k/d, which happens precisely when k is a perfect square.",
+    "So the open lockers are 1, 4, 9, 16, 25, 36, 49, 64, 81 and 100 — ten of them."
+  ],
+  "leaderboard": [
+    {
+      "rank": 1,
+      "handle": "omar.m",
+      "score": "1:44"
+    },
+    {
+      "rank": 2,
+      "handle": "layla_solves",
+      "score": "2:02"
+    },
+    {
+      "rank": 3,
+      "handle": "proof_or_die",
+      "score": "2:09"
+    },
+    {
+      "rank": 4,
+      "handle": "mod_7",
+      "score": "2:51"
+    },
+    {
+      "rank": 5,
+      "handle": "yasmine.k",
+      "score": "3:05"
+    }
+  ]
+}

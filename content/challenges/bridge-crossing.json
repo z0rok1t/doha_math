@@ -1,0 +1,42 @@
+{
+  "slug": "bridge-crossing",
+  "week": "Week 24",
+  "title": "The Bridge Crossing Problem",
+  "prompt": "Four people, one flashlight, one rickety bridge, seventeen minutes. The bridge holds at most two people at a time, and anyone crossing needs the flashlight. Alone, they cross in 1, 2, 5 and 10 minutes; a pair moves at the slower person's pace. Get everyone across in 17 minutes.",
+  "opensAt": "2026-09-07",
+  "closesAt": "2026-09-13",
+  "solutionSteps": [
+    "Send the 1 and 2 across together (2 minutes). The 1 brings the flashlight back (1 minute). Running total: 3.",
+    "Send the 5 and 10 across together (10 minutes). This is the key move — pair the two slowest so you only pay for the 10 once. Running total: 13.",
+    "The 2, already on the far side, walks the flashlight back (2 minutes). Running total: 15.",
+    "The 1 and 2 cross together again (2 minutes). Total: 17 minutes, everyone across.",
+    "The trap is escorting everyone with the fastest person, which costs 1 + 10 + 1 + 5 + 1 + 2 = 19 minutes. Pairing the slow walkers beats shuttling."
+  ],
+  "leaderboard": [
+    {
+      "rank": 1,
+      "handle": "yasmine.k",
+      "score": "2:14"
+    },
+    {
+      "rank": 2,
+      "handle": "proof_or_die",
+      "score": "2:41"
+    },
+    {
+      "rank": 3,
+      "handle": "omar.m",
+      "score": "3:02"
+    },
+    {
+      "rank": 4,
+      "handle": "sine.wave",
+      "score": "3:19"
+    },
+    {
+      "rank": 5,
+      "handle": "layla_solves",
+      "score": "3:47"
+    }
+  ]
+}

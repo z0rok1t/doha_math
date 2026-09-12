@@ -1,0 +1,20 @@
+{
+  "slug": "simpsons-paradox",
+  "number": 411,
+  "title": "The treatment that wins twice and loses overall",
+  "topic": "statistics",
+  "difficulty": "hard",
+  "statement": "Two treatments, 350 patients each. Treatment $A$ cures $78\\%$; treatment $B$ cures $83\\%$. But split the patients into mild and severe cases and $A$ beats $B$ in both groups. Explain how that is possible.",
+  "solutionSteps": [
+    "Here are the numbers. Mild cases: $A$ cures $81$ of $87$, $B$ cures $234$ of $270$. Severe cases: $A$ cures $192$ of $263$, $B$ cures $55$ of $80$.",
+    "Subgroup rates. Mild: $A = 81/87 \\approx 93\\%$ versus $B = 234/270 \\approx 87\\%$. Severe: $A = 192/263 \\approx 73\\%$ versus $B = 55/80 \\approx 69\\%$. $A$ wins both.",
+    "Pooled rates. $A = (81 + 192)/350 = 273/350 = 78\\%$. $B = (234 + 55)/350 = 289/350 \\approx 83\\%$. $B$ wins overall.",
+    "The reason is the mix, not the treatments. $B$ was given mostly mild cases ($270$ of $350$), which are easy to cure. $A$ was handed mostly severe ones ($263$ of $350$).",
+    "A pooled rate is a weighted average of the subgroup rates, and the weights differ between treatments. $B$'s average is pulled up by its easy caseload; $A$'s is dragged down by its hard one.",
+    "This is Simpson's paradox. Case severity is a lurking variable that drives both the assignment and the outcome, so pooling the groups compares different populations. The fix is to compare within strata — or randomise assignment so the mixes match."
+  ],
+  "glyph": "$78\\% < 83\\%$",
+  "videoSeconds": 133,
+  "solveCount": 1104,
+  "publishedAt": "2026-09-09"
+}

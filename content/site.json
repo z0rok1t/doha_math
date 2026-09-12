@@ -1,0 +1,93 @@
+{
+  "name": "Mira Solves",
+  "handle": "@mirasolves",
+  "tagline": "Math that hits different",
+  "hero": {
+    "eyebrow": "2.4M followers on TikTok",
+    "headlineLines": [
+      "Math, but you",
+      "actually want to"
+    ],
+    "headlineAccent": "watch it",
+    "headlineAccentSuffix": ".",
+    "sub": "Every problem from the videos — typed up, worked through, and waiting for you to try it first. No lectures. No textbooks. Just good problems."
+  },
+  "heroStats": [
+    {
+      "value": "412",
+      "label": "PROBLEMS SOLVED TOGETHER"
+    },
+    {
+      "value": "58",
+      "label": "DAY STREAK RECORD"
+    },
+    {
+      "value": "19K",
+      "label": "ACTIVE SOLVERS"
+    }
+  ],
+  "about": {
+    "heading": "Hi, I'm Mira.",
+    "shortParagraph": "I started posting problems from my old notebooks during exam season, mostly to keep myself sane. Three years later, this is somehow a full-time thing.",
+    "paragraphs": [
+      "I started posting problems from my old notebooks during exam season, mostly to keep myself sane. Three years later, this is somehow a full-time thing.",
+      "I still solve every problem by hand before it goes anywhere near a script. If the working does not fit on one index card, it usually means I have not understood it well enough yet — so it goes back in the pile.",
+      "The videos are short because the good part of a problem is short. Everything around it — the setup, the false starts, the algebra — lives here instead, so you can try it yourself before I say a word."
+    ],
+    "stats": [
+      {
+        "value": "2.4M",
+        "label": "TIKTOK FOLLOWERS"
+      },
+      {
+        "value": "412",
+        "label": "PROBLEMS POSTED"
+      },
+      {
+        "value": "3 YRS",
+        "label": "ON THE APP"
+      }
+    ]
+  },
+  "newsletter": {
+    "heading": "Get tomorrow's problem tonight, before it hits the feed.",
+    "note": "One problem a day. No digests, no course upsells."
+  },
+  "socials": [
+    {
+      "platform": "TikTok",
+      "handle": "@mirasolves",
+      "url": "https://www.tiktok.com/@mirasolves"
+    },
+    {
+      "platform": "Instagram",
+      "handle": "@mirasolves",
+      "url": "https://www.instagram.com/mirasolves"
+    },
+    {
+      "platform": "YouTube",
+      "handle": "@mirasolves",
+      "url": "https://www.youtube.com/@mirasolves"
+    }
+  ],
+  "press": [
+    {
+      "outlet": "The Guardian",
+      "title": "The teacher-turned-creator making 90 seconds of algebra go viral",
+      "url": "https://www.example.com/press/guardian-mira-solves",
+      "date": "2026-06-18"
+    },
+    {
+      "outlet": "Wired",
+      "title": "How short-form video quietly became a maths classroom",
+      "url": "https://www.example.com/press/wired-short-form-maths",
+      "date": "2026-03-02"
+    },
+    {
+      "outlet": "Nautilus",
+      "title": "In defence of the hard problem",
+      "url": "https://www.example.com/press/nautilus-hard-problem",
+      "date": "2025-11-24"
+    }
+  ]
+}

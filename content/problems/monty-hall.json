@@ -1,0 +1,19 @@
+{
+  "slug": "monty-hall",
+  "number": 407,
+  "title": "The riddle that breaks everyone's intuition",
+  "topic": "probability",
+  "difficulty": "medium",
+  "statement": "Three doors. A car behind one, goats behind the other two. You pick a door. The host — who knows where the car is — opens a different door to reveal a goat, then offers you the switch. Do you take it?",
+  "solutionSteps": [
+    "Before anything is opened, the car is equally likely behind any door: $P = \\tfrac{1}{3}$ for each.",
+    "Staying wins exactly when your first pick was already correct. That probability is $\\tfrac{1}{3}$, and nothing the host does afterwards changes it.",
+    "Switching wins exactly when your first pick was wrong — because the host has removed the only other losing door, so the remaining door must hold the car.",
+    "Your first pick is wrong with probability $\\tfrac{2}{3}$. So switching wins with probability $\\tfrac{2}{3}$: twice as often as staying.",
+    "The step people miss is that the host's choice is not random. He never opens the car, and that constraint is what pushes the extra $\\tfrac{1}{3}$ onto the door he left shut."
+  ],
+  "glyph": "$P(A \\mid B)$",
+  "videoSeconds": 89,
+  "solveCount": 5177,
+  "publishedAt": "2026-09-05"
+}

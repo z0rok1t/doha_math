@@ -1,0 +1,19 @@
+{
+  "slug": "nine-coins-two-weighings",
+  "number": 408,
+  "title": "Find the fake coin in two weighings",
+  "topic": "puzzles",
+  "difficulty": "medium",
+  "statement": "You have nine identical-looking coins. One is heavier than the rest. You get a balance scale and two weighings. Find the heavy coin — guaranteed, not just usually.",
+  "solutionSteps": [
+    "Split the nine coins into three groups of three: $A$, $B$, $C$.",
+    "Weighing 1: put $A$ against $B$. If one side sinks, the heavy coin is in that group. If they balance, it is in $C$. Either way you now have just three suspects.",
+    "Weighing 2: take the suspect group and weigh any one of its coins against any other.",
+    "If one of those two sinks, that is your coin. If they balance, it is the third one you left off the scale.",
+    "Why three groups and not halves: each weighing has three possible outcomes (left, right, balanced), so two weighings distinguish $3^2 = 9$ cases — exactly the number of coins. Halving would only get you $2^2 = 4$."
+  ],
+  "glyph": "$3^2 = 9$",
+  "videoSeconds": 71,
+  "solveCount": 2260,
+  "publishedAt": "2026-09-06"
+}

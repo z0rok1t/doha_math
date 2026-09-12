@@ -1,0 +1,42 @@
+{
+  "slug": "birthday-collision",
+  "week": "Week 23",
+  "title": "The Birthday Collision",
+  "prompt": "How many people do you need in a room before it is more likely than not that two of them share a birthday? Assume 365 equally likely days. Most people guess around 180. Show why the real answer is far smaller.",
+  "opensAt": "2026-08-31",
+  "closesAt": "2026-09-06",
+  "solutionSteps": [
+    "Count the complement: the probability that all birthdays are distinct.",
+    "With n people that is (365/365)(364/365)(363/365)...((365-n+1)/365) — each new person must miss every birthday already taken.",
+    "The chance of a shared birthday is 1 minus that product. It crosses one half between n = 22 and n = 23.",
+    "At n = 23 the probability is about 0.507. Twenty-three people, not one hundred and eighty.",
+    "The intuition gap: you are not comparing yourself to everyone else, you are comparing every pair. Twenty-three people make 253 pairs, and each one is a chance to collide."
+  ],
+  "leaderboard": [
+    {
+      "rank": 1,
+      "handle": "proof_or_die",
+      "score": "1:58"
+    },
+    {
+      "rank": 2,
+      "handle": "n_choose_k",
+      "score": "2:20"
+    },
+    {
+      "rank": 3,
+      "handle": "yasmine.k",
+      "score": "2:33"
+    },
+    {
+      "rank": 4,
+      "handle": "dana.c",
+      "score": "3:11"
+    },
+    {
+      "rank": 5,
+      "handle": "sine.wave",
+      "score": "3:29"
+    }
+  ]
+}

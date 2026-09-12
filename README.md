@@ -1,36 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mira Solves
 
-## Getting Started
-
-First, run the development server:
+The content hub for Mira's math TikTok. Next.js (App Router) + TypeScript +
+Tailwind v4 + Framer Motion. Content lives in local JSON files — no database, no
+CMS, no accounts.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # also validates every content file
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things are
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+content/                  everything editable without touching code
+  problems/*.json         one file per problem
+  challenges/*.json       one file per weekly challenge
+  daily.json              which problem ran on which date
+  site.json               bio, stat rows, social links, press
+public/problems/*.svg     problem diagrams (referenced as /problems/x.svg)
+reference/
+  the-studio-homepage.html   the approved design mockup, kept for reference
+src/app/globals.css       THE design tokens — colors, fonts, radii, shadows
+src/lib/data/source.ts    the only file that reads the filesystem
+src/lib/data/*.ts         the accessors pages use
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Design tokens live in exactly one place.** `src/app/globals.css` has a
+`@theme` block with every color, font, radius and shadow. Components use the
+generated utilities (`bg-paper`, `text-ink-soft`, `shadow-block-red`,
+`rounded-panel`). There are no hex values anywhere else — if you need a new one,
+add it as a token first.
 
-## Learn More
+## Adding a problem
 
-To learn more about Next.js, take a look at the following resources:
+Create `content/problems/my-problem.json`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```json
+{
+  "slug": "my-problem",
+  "number": 414,
+  "title": "The title shown on cards and the detail page",
+  "topic": "algebra",
+  "difficulty": "medium",
+  "statement": "Solve $x^2 - 4 = 0$.",
+  "solutionSteps": [
+    "First step. One revealable step per entry.",
+    "Second step. $$x = \\pm 2$$"
+  ],
+  "glyph": "$x^2 - 4 = 0$",
+  "videoSeconds": 84,
+  "solveCount": 1200,
+  "publishedAt": "2026-09-12"
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `topic` must be one of: `algebra`, `geometry`, `calculus`, `probability`,
+  `number-theory`, `puzzles`, `statistics`, `olympiad`.
+- **Math**: `$...$` for inline, `$$...$$` for a centred block. Rendered with
+  KaTeX on the server. In JSON, every LaTeX backslash must be doubled
+  (`\\frac`, `\\pi`).
+- `solutionSteps` is the reveal order — each entry becomes one step the reader
+  unlocks.
+- `glyph` (optional) is the short expression lettered across the video
+  thumbnail. Leave it out and one is derived from the statement.
+- `tiktokUrl` (optional) — see below.
+- `figure` (optional) — a diagram; see below.
+- The build fails with the file name and field if anything is missing or
+  malformed, so a typo can't ship silently.
 
-## Deploy on Vercel
+Nothing else needs updating: the problem appears on `/problems`, `/watch`, its
+topic card count, and related-problem lists automatically.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Adding a diagram
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Put the image in **`public/problems/`** and point the problem at it:
+
+```json
+"figure": {
+  "src": "/problems/my-diagram.svg",
+  "alt": "What the diagram shows, in a sentence.",
+  "caption": "Optional line under the image",
+  "width": 240,
+  "height": 240
+}
+```
+
+- **SVG is the best format** for a maths figure — crisp at any size and tiny.
+  PNG, JPG and WebP also work.
+- `src` must start with `/problems/`. The path is relative to `public/`, so
+  `public/problems/my-diagram.svg` is referenced as `/problems/my-diagram.svg`.
+- **`alt` is required.** A geometry diagram with no text alternative is
+  invisible to anyone using a screen reader. Describe what the figure shows,
+  not that it is a figure.
+- `width` and `height` are the image's real pixel dimensions. They reserve the
+  space before the file loads so the page doesn't jump as you read.
+- `caption` is rendered in small uppercase mono, so avoid maths variables in it
+  — "side a + b" would come out as "SIDE A + B".
+
+Two guards run at build time, both naming the problem and field:
+
+```
+Error: Problem figures point at files that do not exist:
+  - pythagoras-without-words -> public/problems/typo.svg
+
+Error: content/problems/pythagoras-without-words.json failed validation:
+  - figure.src: must be a path like /problems/my-diagram.svg
+```
+
+`pythagoras-without-words` and `five-points-unit-square` both ship a diagram —
+copy either one as a starting point.
+
+### Where to put raw source material
+
+There is nowhere the site reads PDFs, scans or loose notes from. You *can* park
+them in `content/problems/` without breaking anything — the loader only reads
+`*.json`, so other files are ignored and the build still passes — but nothing
+will render them. Turning a PDF or a photo of a notebook into problems is a
+manual step: read it, write the JSON.
+
+### Scheduling it as a daily problem
+
+Add a line to `content/daily.json`:
+
+```json
+{ "2026-09-12": "my-problem" }
+```
+
+Oldest date is day 1. If today isn't listed, `/daily` falls back to the most
+recent past entry, so the page is never empty.
+
+## Videos
+
+`<TikTokEmbed>` does both jobs: given a `tiktokUrl` it renders TikTok's official
+oEmbed; without one it renders the designed placeholder (the blue gradient panel
+with the equation). **No seed problem has a real URL yet**, so every embed on the
+site is currently the placeholder — which is why it looks finished. Pasting a
+real URL into a content file switches that one over. It's a data change, not a
+code change.
+
+## What is deliberately fake
+
+| Thing | State |
+|---|---|
+| Leaderboards | Placeholder rows in `content/challenges/*.json`. No submissions, timing or ranking. |
+| Newsletter signup | Logs to the console and shows a confirmation. Sends no email. |
+| `solveCount` | A number in the content file. Nothing increments it. |
+| Streak | Real, but `localStorage` only — per browser, no account, cleared with site data. |
+
+Each of these has a `// TODO:` at the exact spot that would change, explaining
+what's needed. Grep for `TODO:` to find them.
+
+## Swapping the file-based content for a database or CMS
+
+`src/lib/data/source.ts` is the only module that touches the filesystem.
+Everything else calls the async accessors in `src/lib/data/`. Reimplement the
+four `load*` functions there against a real backend and no page or component
+needs to change — that's why the accessors are async despite reading local
+files.
+
+## Deploying
+
+Vercel, default Next.js settings. Pages that show "today" (`/`, `/daily`,
+`/daily/archive`, `/challenges`) revalidate hourly; everything else is static.

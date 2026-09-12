@@ -1,0 +1,25 @@
+{
+  "slug": "pythagoras-without-words",
+  "number": 406,
+  "title": "A proof of Pythagoras with no words",
+  "topic": "geometry",
+  "difficulty": "easy",
+  "statement": "Take a right triangle with legs $a$ and $b$ and hypotenuse $c$. Using only four copies of it and one square, show that $a^2 + b^2 = c^2$.",
+  "solutionSteps": [
+    "Draw a square with side $a + b$. Its area is $(a + b)^2$.",
+    "Place the four triangles inside it, one along each edge, each with its right angle in a corner. The hole they leave in the middle is a square whose side is the hypotenuse, $c$.",
+    "Now add up the same area a second way: four triangles at $\\tfrac{1}{2}ab$ each, plus the tilted square. That gives $4 \\cdot \\tfrac{1}{2}ab + c^2 = 2ab + c^2$.",
+    "Both expressions measure the same square, so $(a + b)^2 = 2ab + c^2$.",
+    "Expand the left side: $a^2 + 2ab + b^2 = 2ab + c^2$. Cancel the $2ab$ from both sides and you are left with $a^2 + b^2 = c^2$."
+  ],
+  "figure": {
+    "src": "/problems/pythagoras-rearrangement.svg",
+    "width": 240,
+    "height": 240,
+    "alt": "A square of side a plus b containing four copies of the right triangle, arranged so the gap they leave in the middle is a tilted square whose side is the hypotenuse c.",
+    "caption": "Four copies of the triangle, one against each edge"
+  },
+  "videoSeconds": 62,
+  "solveCount": 3902,
+  "publishedAt": "2026-09-04"
+}

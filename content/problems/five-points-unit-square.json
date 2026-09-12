@@ -1,0 +1,27 @@
+{
+  "slug": "five-points-unit-square",
+  "number": 412,
+  "title": "Five points, one square, no escape",
+  "topic": "olympiad",
+  "difficulty": "hard",
+  "statement": "Prove that among any five points placed in a $1 \\times 1$ square, some two of them are at distance at most $\\dfrac{\\sqrt{2}}{2}$ from each other. The bound must hold for every arrangement.",
+  "solutionSteps": [
+    "Cut the unit square into four congruent $\\tfrac{1}{2} \\times \\tfrac{1}{2}$ squares by halving each side.",
+    "Five points, four cells. By the pigeonhole principle, at least one cell contains two of the points. (Points on a shared edge can be assigned to either cell — pick one; the argument is unaffected.)",
+    "The farthest apart two points inside a square can be is the length of its diagonal.",
+    "For a cell of side $\\tfrac{1}{2}$, that diagonal is $\\sqrt{\\left(\\tfrac{1}{2}\\right)^2 + \\left(\\tfrac{1}{2}\\right)^2} = \\dfrac{\\sqrt{2}}{2}$.",
+    "So those two co-located points are at distance at most $\\dfrac{\\sqrt{2}}{2}$, which is what we needed.",
+    "The bound is tight: put the five points at the four corners and the centre and the minimum distance is exactly $\\dfrac{\\sqrt{2}}{2}$, so no smaller constant works."
+  ],
+  "figure": {
+    "src": "/problems/five-points-pigeonhole.svg",
+    "width": 240,
+    "height": 240,
+    "alt": "A unit square cut by dashed lines into four equal cells, with points at the four corners and the centre. The diagonal of the top-left cell is marked and labelled root two over two.",
+    "caption": "Four cells, five points — one cell must hold two"
+  },
+  "glyph": "$\\tfrac{\\sqrt{2}}{2}$",
+  "videoSeconds": 96,
+  "solveCount": 742,
+  "publishedAt": "2026-09-10"
+}

@@ -1,26 +1,170 @@
 @import "tailwindcss";
 
+/* =============================================================
+   "The Studio" — design tokens.
+   This block is the ONLY place colors, radii and shadows are
+   defined. Never hardcode a hex value in a component.
+   ============================================================= */
+@theme {
+  /* ---- palette ---- */
+  --color-paper: #FBFAF5;
+  --color-paper-alt: #F2EFE4;
+  --color-card: #FFFFFF;
+  --color-ink: #15161C;
+  --color-ink-soft: #55564F;
+  --color-red: #FF3B2F;
+  --color-red-dark: #D62A20;
+  --color-blue: #2A4CDB;
+  --color-yellow: #FFC83D;
+  --color-line: #DEDBCC;
+
+  /* Support colors for the dark bands (POTD, newsletter, phone screen).
+     Taken from the approved mockup so dark surfaces stay consistent. */
+  --color-ink-mute: #B8B6A9;
+  --color-ink-raise: #1E1F26;
+  --color-ink-line: #494A44;
+  --color-ink-faint: #8A8B82;
+
+  /* ---- type ---- */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* ---- radii: square-ish on purpose, never a rounded SaaS card ----
+     Named to avoid Tailwind's reserved logical-side utilities
+     (rounded-s / rounded-e), which a --radius-s token would shadow. */
+  --radius-ctl: 5px;    /* buttons, inputs, pills */
+  --radius-card: 6px;   /* index cards */
+  --radius-panel: 10px; /* full-width bands, video cards, topic cards */
+  --radius-mark: 3px;   /* logo mark, small mono tags */
+
+  /* ---- hard offset block shadows — an offset color block, never a blur ---- */
+  --shadow-block-red: 6px 8px 0 var(--color-red);
+  --shadow-block-blue: 6px 8px 0 var(--color-blue);
+  --shadow-block-yellow: 6px 8px 0 var(--color-yellow);
+  --shadow-block-ink: 6px 8px 0 var(--color-ink);
+  --shadow-card-yellow: 8px 10px 0 var(--color-yellow);
+  --shadow-phone: 0 24px 40px -18px rgb(20 20 20 / 0.45);
+
+  /* ---- layout ---- */
+  --container-wrap: 1180px;
+  /* Comfortable reading measure. In `ch` so it tracks whatever font size the
+     element it's applied to uses — ~68 characters a line, against the 90+
+     that an uncapped content column produces on a wide screen. */
+  --container-measure: 68ch;
+  /* 880px — the single breakpoint the mockup switches layout at */
+  --breakpoint-wide: 55rem;
+}
+
+/* Page-background internals. Declared here rather than in @theme because only
+   the body background consumes them — they are not part of the utility
+   palette, so they should not generate Tailwind classes. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper-hi: #FFFFFF; /* lightest paper highlight */
+  /* A seamless grayscale noise tile. stitchTiles='stitch' is what keeps the
+     180px tile from showing seams where it repeats. */
+  --paper-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  /* Next 16 no longer forces scroll-behavior:auto during route changes;
+     data-scroll-behavior="smooth" on <html> restores snappy navigation
+     while keeping smooth in-page anchor scrolling. See layout.tsx. */
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    /* Printed paper: a warm sheet with a fine fibre texture, light gathering
+       at the top of the page and a warm settle at the foot.
+
+       NOTE this is a deliberate departure from the brief, which lists a "faint
+       graph-paper grid" as a motif to preserve. The ruling was replaced with
+       this texture on request; the grid version is recoverable from history if
+       it is ever wanted back.
+
+       The fibre is blended soft-light rather than painted normally: grayscale
+       noise at a visible strength over normal blend (or multiply) desaturates
+       #FBFAF5 toward gray and the paper starts to look dirty. Soft-light
+       modulates lightness only, so the warmth survives. */
+    background-color: var(--color-paper);
+    background-image:
+      var(--paper-fibre),
+      radial-gradient(110% 100% at 50% 0%, var(--paper-hi) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 0%, var(--color-paper-alt) 100%);
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-size:
+      180px 180px,
+      100% 700px,
+      100% 700px;
+    background-position:
+      0 0,
+      50% 0,
+      50% 100%;
+    background-blend-mode: soft-light, normal, normal;
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.02;
+  }
+
+  /* Visible keyboard focus everywhere — the reveal and filter controls
+     are keyboard-driven, so this has to be unmistakable. */
+  :focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+}
+
+/* ---------------------------------------------------------------
+   KaTeX overrides.
+   Deliberately UNLAYERED and imported after katex.min.css: cascade
+   layers always lose to unlayered rules, so putting these inside
+   @layer components would let KaTeX's own defaults win.
+   --------------------------------------------------------------- */
+.katex {
+  /* KaTeX defaults to 1.21em, which makes inline math bulge out of a
+     sentence. */
+  font-size: 1.05em;
+  color: inherit;
+}
+
+.katex-display {
+  margin: 0.75rem 0;
+  /* Long display math scrolls in its own box rather than widening the page. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+
+/* Honour the OS "reduce motion" setting globally: the entrance, reveal and
+   crossfade moments all collapse to instant state changes. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

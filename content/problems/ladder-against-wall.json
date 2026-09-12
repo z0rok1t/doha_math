@@ -1,0 +1,20 @@
+{
+  "slug": "ladder-against-wall",
+  "number": 413,
+  "title": "The ladder that falls faster than it slides",
+  "topic": "calculus",
+  "difficulty": "medium",
+  "statement": "A ladder $10$ m long leans against a vertical wall. The base is pulled away from the wall at a steady $2$ m/s. How fast is the top of the ladder falling at the moment the base is $6$ m out?",
+  "solutionSteps": [
+    "Name the quantities. Let $x$ be the base's distance from the wall and $y$ the height of the top, both changing with time. The ladder's length is fixed, so $x^2 + y^2 = 10^2$.",
+    "Differentiate the whole relation with respect to time $t$: $$2x\\frac{dx}{dt} + 2y\\frac{dy}{dt} = 0 \\quad\\Longrightarrow\\quad x\\frac{dx}{dt} + y\\frac{dy}{dt} = 0.$$",
+    "Find the missing side at the instant we care about. When $x = 6$: $y = \\sqrt{100 - 36} = 8$.",
+    "Substitute $x = 6$, $y = 8$, and $\\dfrac{dx}{dt} = 2$: $$6(2) + 8\\frac{dy}{dt} = 0.$$",
+    "Solve: $\\dfrac{dy}{dt} = -\\dfrac{12}{8} = -1.5$ m/s. The top is falling at $1.5$ m/s — the minus sign just means $y$ is shrinking.",
+    "Worth noticing: the top falls slower than the base slides here, but as $x \\to 10$ the ratio $-x/y$ blows up, so near the ground the top accelerates without bound. That is the part the video ends on."
+  ],
+  "glyph": "$\\tfrac{dy}{dt}$",
+  "videoSeconds": 84,
+  "solveCount": 3110,
+  "publishedAt": "2026-09-11"
+}
