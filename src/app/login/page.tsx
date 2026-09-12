@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { signIn } from "@/auth";
 import { Container } from "@/components/layout/Container";
 import { Logo } from "@/components/layout/Logo";
 import { IndexCard } from "@/components/ui/IndexCard";
+import { AuthSetupGuide } from "@/components/admin/AuthSetupGuide";
+import { authConfigProblems } from "@/lib/admin/config";
 import { safeReturnTo } from "@/lib/admin/returnTo";
 
 export const metadata: Metadata = {
@@ -26,6 +29,32 @@ export default async function LoginPage(props: PageProps<"/login">) {
   const error = errorKey
     ? (ERRORS[errorKey] ?? "Something went wrong signing in. Try again.")
     : null;
+
+  // Bounce nobody to GitHub with credentials GitHub will not recognise: that
+  // produces GitHub's own 404 page, which reads as a broken site rather than
+  // an unfinished setup.
+  const problems = authConfigProblems();
+  if (problems.length > 0) {
+    const requestHeaders = await headers();
+    const host =
+      requestHeaders.get("x-forwarded-host") ??
+      requestHeaders.get("host") ??
+      "localhost:3000";
+    const proto =
+      requestHeaders.get("x-forwarded-proto") ??
+      (host.startsWith("localhost") || host.startsWith("127.0.0.1")
+        ? "http"
+        : "https");
+
+    return (
+      <Container className="max-w-[620px] py-16">
+        <div className="mb-8 flex justify-center">
+          <Logo />
+        </div>
+        <AuthSetupGuide problems={problems} origin={`${proto}://${host}`} />
+      </Container>
+    );
+  }
 
   return (
     <Container className="flex min-h-dvh max-w-[460px] flex-col justify-center py-16">
