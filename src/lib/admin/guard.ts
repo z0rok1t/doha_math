@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { auth, isAdminIdentity } from "@/auth";
+import { auth } from "@/auth";
+import { isAllowed } from "@/lib/admin/allowlist";
 
 export type AdminSession = {
   email: string;
@@ -28,7 +29,7 @@ export async function requireAdmin(): Promise<AdminSession> {
 
   // Signed in but not on the allowlist. Not a redirect: they are authenticated
   // and looping them back to sign-in would be confusing.
-  if (!isAdminIdentity({ email, login })) {
+  if (!isAllowed({ email, login })) {
     throw new Error(
       `${login ? `@${login}` : email} is not on the admin allowlist.`,
     );
@@ -56,7 +57,7 @@ export async function getAdmin(): Promise<AdminSession | null> {
   const session = await auth();
   const email = session?.user?.email ?? null;
   const login = session?.githubLogin ?? null;
-  if (!isAdminIdentity({ email, login }) || !session?.githubToken) return null;
+  if (!isAllowed({ email, login }) || !session?.githubToken) return null;
   return {
     email: email ?? `@${login}`,
     login: login ?? undefined,

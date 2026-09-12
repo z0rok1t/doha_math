@@ -1,5 +1,6 @@
 import NextAuth, { type Profile } from "next-auth";
 import GitHub from "next-auth/providers/github";
+import { isAllowed } from "@/lib/admin/allowlist";
 
 /**
  * Auth for /admin.
@@ -16,39 +17,6 @@ import GitHub from "next-auth/providers/github";
  *   2. `requireAdmin()` in src/lib/admin/guard.ts, called by every admin page
  *      and every Server Action — that is the actual security boundary.
  */
-
-function parseList(value: string | undefined): string[] {
-  return (value ?? "")
-    .split(",")
-    .map((entry) => entry.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-const ADMIN_EMAILS = parseList(process.env.ADMIN_EMAILS);
-const ADMIN_LOGINS = parseList(process.env.ADMIN_LOGINS);
-
-/**
- * Who may use the panel.
- *
- * Either identifier is accepted. A GitHub account can keep its email private,
- * and the email it signs commits with is often not its primary address — so
- * relying on email alone makes "not on the allowlist" a common and baffling
- * first-run failure. A username is stable and visible.
- *
- * Fails closed: if neither list is configured, nobody gets in.
- */
-export function isAdminIdentity({
-  email,
-  login,
-}: {
-  email?: string | null;
-  login?: string | null;
-}): boolean {
-  if (ADMIN_EMAILS.length === 0 && ADMIN_LOGINS.length === 0) return false;
-  if (email && ADMIN_EMAILS.includes(email.toLowerCase())) return true;
-  if (login && ADMIN_LOGINS.includes(login.toLowerCase())) return true;
-  return false;
-}
 
 type GitHubEmail = { email: string; primary: boolean; verified: boolean };
 
@@ -99,9 +67,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ account, profile }) {
       const login = typeof profile?.login === "string" ? profile.login : null;
       // Skip the extra email lookup when the username alone already qualifies.
-      if (isAdminIdentity({ login })) return true;
+      if (isAllowed({ login })) return true;
       const email = await resolveEmail(profile, account?.access_token);
-      return isAdminIdentity({ email, login });
+      return isAllowed({ email, login });
     },
     async jwt({ token, account, profile }) {
       // `account` is only present on the initial sign-in.
