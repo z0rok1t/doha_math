@@ -16,10 +16,16 @@ export const metadata: Metadata = {
 
 const ERRORS: Record<string, string> = {
   AccessDenied:
-    "That GitHub account is not on the allowlist. Add its username to ADMIN_LOGINS (or its email to ADMIN_EMAILS) and try again.",
+    "That GitHub account is not on the allowlist. Add its username to ADMIN_LOGINS (or its email to ADMIN_EMAILS), restart the server, and try again.",
   Configuration:
     "Sign-in is not configured. AUTH_SECRET, AUTH_GITHUB_ID and AUTH_GITHUB_SECRET all need to be set.",
   Verification: "That sign-in link has expired. Try again.",
+  OAuthSignin: "Could not reach GitHub to start sign-in.",
+  OAuthCallback:
+    "GitHub rejected the callback. This is almost always the callback URL below not matching the one registered on the OAuth app.",
+  OAuthAccountNotLinked: "That account is already linked to a different sign-in.",
+  Callback:
+    "The sign-in callback failed. Check that the callback URL below matches the OAuth app exactly.",
 };
 
 export default async function LoginPage(props: PageProps<"/login">) {
@@ -33,19 +39,26 @@ export default async function LoginPage(props: PageProps<"/login">) {
   // Bounce nobody to GitHub with credentials GitHub will not recognise: that
   // produces GitHub's own 404 page, which reads as a broken site rather than
   // an unfinished setup.
+  const requestHeaders = await headers();
+  const host =
+    requestHeaders.get("x-forwarded-host") ??
+    requestHeaders.get("host") ??
+    "localhost:3000";
+  const proto =
+    requestHeaders.get("x-forwarded-proto") ??
+    (host.startsWith("localhost") || host.startsWith("127.0.0.1")
+      ? "http"
+      : "https");
+  /**
+   * Auth.js derives redirect_uri from the host it is served on, and GitHub
+   * demands an exact match with the OAuth app's registered callback. Next
+   * quietly moves to 3001 when 3000 is busy, which breaks that match with no
+   * visible cause — so the expected URL is shown here to compare against.
+   */
+  const callbackUrl = `${proto}://${host}/api/auth/callback/github`;
+
   const problems = authConfigProblems();
   if (problems.length > 0) {
-    const requestHeaders = await headers();
-    const host =
-      requestHeaders.get("x-forwarded-host") ??
-      requestHeaders.get("host") ??
-      "localhost:3000";
-    const proto =
-      requestHeaders.get("x-forwarded-proto") ??
-      (host.startsWith("localhost") || host.startsWith("127.0.0.1")
-        ? "http"
-        : "https");
-
     return (
       <Container className="max-w-[620px] py-16">
         <div className="mb-8 flex justify-center">
@@ -97,6 +110,25 @@ export default async function LoginPage(props: PageProps<"/login">) {
             Continue with GitHub
           </button>
         </form>
+
+        <details className="mt-6 border-t-2 border-line pt-4">
+          <summary className="cursor-pointer font-mono text-[0.7rem] uppercase tracking-wide text-ink-soft">
+            Sign-in failing? Check this
+          </summary>
+          <p className="mt-3 text-[0.82rem] text-ink-soft">
+            Your GitHub OAuth app&apos;s{" "}
+            <strong>Authorization callback URL</strong> must be exactly this,
+            character for character:
+          </p>
+          <code className="mt-2 block select-all break-all rounded-ctl border-2 border-line bg-paper p-2.5 font-mono text-[0.78rem]">
+            {callbackUrl}
+          </code>
+          <p className="mt-3 text-[0.82rem] text-ink-soft">
+            Note the port. Next.js moves to 3001 (then 3002…) when 3000 is
+            already in use, and the registered URL then no longer matches.
+            Either free the port or update the OAuth app.
+          </p>
+        </details>
       </IndexCard>
 
       <p className="mt-6 text-center font-mono text-[0.72rem] uppercase tracking-wide text-ink-soft">
